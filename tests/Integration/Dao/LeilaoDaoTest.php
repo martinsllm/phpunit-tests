@@ -9,12 +9,19 @@ use PHPUnit\Framework\TestCase;
 
 class LeilaoDaoTest extends TestCase 
 {
+    private \PDO $pdo;
+
+    public function setUp(): void
+    {
+        $this->pdo = ConnectionCreator::getConnection();
+        $this->pdo->beginTransaction();
+    }
+
     public function testInsercaoEBuscaDevemFuncionar()
     {
         //arrange
         $leilao = new Leilao('Fiat 147 0KM', new \DateTimeImmutable('2024-06-01 20:00:00'));
-        $pdo = ConnectionCreator::getConnection();
-        $leilaoDao = new LeilaoDao($pdo);
+        $leilaoDao = new LeilaoDao($this->pdo);
         $leilaoDao->salva($leilao);
         
         //act
@@ -25,7 +32,10 @@ class LeilaoDaoTest extends TestCase
         self::assertContainsOnlyInstancesOf(Leilao::class, $leiloes);
         self::assertEquals('Fiat 147 0KM', $leiloes[0]->recuperarDescricao());
 
-        //teardown
-        $pdo->exec('DELETE FROM leiloes'); // Limpa a tabela após o teste
+    }
+
+    public function tearDown(): void
+    {
+        $this->pdo->rollBack();
     }
 }
