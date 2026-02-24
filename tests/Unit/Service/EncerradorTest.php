@@ -36,7 +36,7 @@ class EncerradorTest extends TestCase
         $this->encerrador = new Encerrador($leilaoDao, $this->enviadorEmail);
     }
 
-    public function testLeiloesComMaisDeUmaSemanaDevemSerEncerrados()
+    public function testVerificaSeLeilaoFoiEncerrado()
     {
         $this->encerrador->encerra();
         
