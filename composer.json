@@ -1,7 +1,8 @@
 {
     "autoload": {
         "psr-4": {
-            "Alura\\Leilao\\": "src/"
+            "Alura\\Leilao\\": "src/",
+            "Alura\\Leilao\\Tests\\": "tests/"
         }
     },
     "require": {
