@@ -44,6 +44,7 @@ class LeilaoDaoTest extends TestCase
         self::assertCount(1, $leiloes);
         self::assertContainsOnlyInstancesOf(Leilao::class, $leiloes);
         self::assertEquals('Fiat 147 0KM', $leiloes[0]->recuperarDescricao());
+        self::assertFalse($leiloes[0]->estaFinalizado());
     }
 
     #[DataProvider('leiloes')]
@@ -62,7 +63,27 @@ class LeilaoDaoTest extends TestCase
         self::assertCount(1, $leiloes);
         self::assertContainsOnlyInstancesOf(Leilao::class, $leiloes);
         self::assertEquals('Brasilia 0KM', $leiloes[0]->recuperarDescricao());
+        self::assertTrue($leiloes[0]->estaFinalizado());
     }
+
+    public function testAoAtualizarLeilaoStatusDeveSerAlterado()
+    {
+        //arrange
+        $leilaoDao = new LeilaoDao(self::$pdo);
+        $leilaoDao->salva(new Leilao('Fiat 147 0KM'));
+
+        //act
+        $leilao = $leilaoDao->recuperarNaoFinalizados()[0];
+        $leilao->finaliza();
+        $leilaoDao->atualiza($leilao);  
+
+        //assert
+        $leiloes = $leilaoDao->recuperarFinalizados();
+        self::assertCount(1, $leiloes);
+        self::assertContainsOnlyInstancesOf(Leilao::class, $leiloes);
+        self::assertEquals('Fiat 147 0KM', $leiloes[0]->recuperarDescricao());
+        self::assertTrue($leiloes[0]->estaFinalizado());
+    }   
 
     public function tearDown(): void
     {
